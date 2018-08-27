@@ -1,3 +1,5 @@
+package dynamicprogramming
+
 fun main(args: Array<String>) {
 
     val input1 = "ACCGGTCGAGTGCGCGGAAGCCGGCCGAA"
@@ -16,9 +18,9 @@ fun lcs(input1: String, input2: String, i: Int, j: Int, caching: Array<Array<Int
     } else if (caching[i][j] != Int.MAX_VALUE) {
         return caching[i][j]
     } else if (input1[i] == input2[j]) {
-        caching[i][j] = 1 + lcs(input1, input2, i-1, j-1, caching)
+        caching[i][j] = 1 + lcs(input1, input2, i - 1, j - 1, caching)
     } else {
-        caching[i][j] = maxOf(lcs(input1, input2, i-1, j, caching), lcs(input1, input2, i, j-1, caching))
+        caching[i][j] = maxOf(lcs(input1, input2, i - 1, j, caching), lcs(input1, input2, i, j - 1, caching))
     }
 
     return caching[i][j]

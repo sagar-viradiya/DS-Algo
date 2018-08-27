@@ -1,3 +1,5 @@
+package dynamicprogramming
+
 fun main(args: Array<String>) {
 
     //Change this to test diff use cases

@@ -1,3 +1,5 @@
+package divideandconquer
+
 /**
  * Maximum sub array problem
  *
@@ -66,4 +68,5 @@ fun getMaximumCrossSubArray(array: IntArray, low: Int, mid: Int, high: Int) : Ma
 
 
 data class MaximumTuple(val low: Int, val high: Int, val sum: Int)
-//Output will be MaximumTuple(low=7, high=10, sum=43)
+
+//Output will be divideandconquer.MaximumTuple(low=7, high=10, sum=43)

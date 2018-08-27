@@ -1,3 +1,5 @@
+package dynamicprogramming
+
 lateinit var scalarMultiplicationMatrix: Array<IntArray>
 lateinit var partitionMatrix: Array<IntArray>
 
@@ -45,7 +47,7 @@ fun printOptimalParenthesization(i: Int, j: Int) {
     } else {
         print("(")
         printOptimalParenthesization(i, partitionMatrix[i][j])
-        printOptimalParenthesization(partitionMatrix[i][j] +  1, j)
+        printOptimalParenthesization(partitionMatrix[i][j] + 1, j)
         print(")")
     }
 }
