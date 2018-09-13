@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
     print(combinationSum(nums, target, caching))
 }
 
-fun combinationSum(nums: IntArray, target: Int, caching: IntArray): Int {
+private fun combinationSum(nums: IntArray, target: Int, caching: IntArray): Int {
 
     if (caching[target] != -1) {
         return caching[target]
