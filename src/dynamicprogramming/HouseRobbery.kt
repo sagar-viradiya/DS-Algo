@@ -16,7 +16,8 @@ package dynamicprogramming
 fun main(args: Array<String>) {
     val money = intArrayOf(5, 3, 4, 11, 2)
     val caching = IntArray(money.size) { -1 }
-    print(maximizeRobbery(0, money, caching))
+    println(maximizeRobbery(0, money, caching))
+    print(maximizeRobbery(money))
 }
 
 private fun maximizeRobbery(start: Int, money: IntArray, caching: IntArray): Int {
@@ -41,5 +42,28 @@ private fun maximizeRobbery(start: Int, money: IntArray, caching: IntArray): Int
             money[start + 1] + maximizeRobbery(start + 3, money, caching))
 
     return caching[start]
+
+}
+
+//Bottom up approach
+private fun maximizeRobbery(money: IntArray): Int {
+
+    if (money.size == 1) {
+        return money[0]
+    }
+
+    if (money.size == 2) {
+        return maxOf(money[0], money[1])
+    }
+
+    val robberies = IntArray(money.size)
+    robberies[0] = money[0]
+    robberies[1] = maxOf(money[0], money[1])
+
+    for (i in 2 until money.size) {
+        robberies[i] = maxOf(money[i] + robberies[i - 2], robberies[i - 1])
+    }
+
+    return robberies[money.size - 1]
 
 }
