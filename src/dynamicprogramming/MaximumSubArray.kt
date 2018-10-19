@@ -9,9 +9,10 @@ fun main(args: Array<String>) {
 private fun maximumSubArray(array: IntArray): MaximumTuple {
     val solutions = IntArray(array.size + 1)
 
-    var startIndex = 0
+    var startIndex = -1
+    var startIndexTemp = -1
     var currentMax = 0
-    var endIndex = 0
+    var endIndex = -1
     var temp: Int
 
     for (i in 1..array.size) {
@@ -20,9 +21,10 @@ private fun maximumSubArray(array: IntArray): MaximumTuple {
             solutions[i] = temp
         } else {
             solutions[i] = array[i-1]
-            startIndex = i-1
+            startIndexTemp = i-1
         }
         if (currentMax < solutions[i]) {
+            startIndex = startIndexTemp
             endIndex = i-1
             currentMax = solutions[i]
         }
