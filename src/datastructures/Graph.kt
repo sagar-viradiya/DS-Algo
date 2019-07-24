@@ -80,6 +80,36 @@ class Graph<T> {
         return false
     }
 
+    fun DFSIterative(source: Node<T>, destination: Node<T>): Boolean {
+        var start = source
+        val visited: MutableSet<Int> = mutableSetOf()
+        val stack = Stack<Node<T>>()
+
+        stack.push(source)
+
+        while (stack.isNotEmpty()) {
+            if (visited.contains(start.id)) {
+                continue
+            }
+            visited.add(start.id)
+            if (start == destination) {
+                return true
+            }
+
+            for (node in start.adjacent) {
+                if (visited.contains(node.id)) {
+                    continue
+                }
+                stack.push(node)
+            }
+
+            start = stack.pop()
+        }
+
+        return false
+
+    }
+
     fun shortestPath(source: Node<T>, destination: Node<T>, visited: MutableSet<Int> = mutableSetOf()): Int {
         if (source == destination) {
             return 0
