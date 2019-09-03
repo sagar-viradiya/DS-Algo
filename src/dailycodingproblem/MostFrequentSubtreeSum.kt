@@ -1,4 +1,4 @@
-package practice
+package dailycodingproblem
 
 /*
     Given the root of a tree, you are asked to find the most frequent subtree sum.
