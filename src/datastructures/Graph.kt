@@ -1,38 +1,45 @@
 package datastructures
 
-import java.lang.IllegalStateException
 import java.util.*
 
 class Graph<T> {
 
-    data class Node<T>(val id: Int, val value: T, val adjacent: LinkedList<Node<T>> = LinkedList())
+    data class Node<T>(val id: Int, val value: T, val adjacent: LinkedList<WeightedNode<T>> = LinkedList())
 
-    private val nodes = mutableListOf<Node<T>>()
+    class WeightedNode<T>(val node: Node<T>, val weight: Int = 1): Comparable<WeightedNode<T>> {
+        override fun compareTo(other: WeightedNode<T>): Int {
+            return when {
+                weight > other.weight -> 1
+                weight < other.weight -> -1
+                else -> 0
+            }
+        }
+    }
+
+    private val nodes = mutableSetOf<Node<T>>()
     private val nodeIds = mutableSetOf<Int>()
 
+    private val weightedNodes = mutableSetOf<WeightedNode<T>>()
+
+
     fun add(node: Node<T>) {
-        if (nodeIds.contains(node.id)) {
-            throw IllegalStateException("Node is already in graph")
-        }
+        check(!nodeIds.contains(node.id)) { "Node is already in graph" }
         nodes += node
         nodeIds += node.id
     }
 
     fun remove(node: Node<T>) {
-        if (!nodeIds.contains(node.id)) {
-            throw IllegalStateException("Node is not present in graph")
-        }
+        check(nodeIds.contains(node.id)) { "Node is not present in graph" }
         nodes -= node
         nodeIds -= node.id
 
         for (node1 in nodes) {
-            if (node1.adjacent.contains(node)) {
-                node1.adjacent -= node
-            }
+            val weightedNode = node1.adjacent.first { it.node == node }
+            node1.adjacent -= weightedNode
         }
     }
 
-    fun getNodes(): List<Node<T>> = nodes
+    fun getNodes(): List<Node<T>> = nodes.toList()
 
     fun hasPath(source: Node<T>, destination: Node<T>): Boolean {
         val queue = ArrayDeque<Node<T>>()
@@ -49,7 +56,7 @@ class Graph<T> {
             }
 
             visitedNodeIds.add(tempNode.id)
-            queue.addAll(tempNode.adjacent)
+            queue.addAll(tempNode.adjacent.map { it.node })
         }
 
         return false
@@ -57,6 +64,56 @@ class Graph<T> {
 
     fun hasPathDFS(source: Node<T>, destination: Node<T>): Boolean {
         return DFS(source, destination)
+    }
+
+    fun shortestPathBFS(source: Node<T>, destination: Node<T>): Int {
+
+        if (source == destination) return 0
+
+        val distanceMap = mutableMapOf<Node<T>, Int>()
+        val queue = ArrayDeque<Node<T>>()
+        queue.add(source)
+        distanceMap[source] = 0
+        var tempNode: Node<T>
+
+        while (!queue.isEmpty()) {
+            tempNode = queue.remove()
+            tempNode.adjacent.filter { distanceMap[it.node] == null }.forEach {
+                if (destination == it) return distanceMap[tempNode]!! + 1
+                distanceMap[it.node] = distanceMap[tempNode]!! + 1
+                queue.add(it.node)
+            }
+        }
+
+        //Return -1 if destination not found
+        return -1
+    }
+
+    fun dijkstrasAlgo(source: Node<T>): Map<Node<T>, Int> {
+        val distanceTable = mutableMapOf<Node<T>, Int>()
+        distanceTable[source] = 0
+        val priorityQueue = PriorityQueue<WeightedNode<T>>()
+        val visitedNodeIds = mutableSetOf<Int>()
+        priorityQueue.add(WeightedNode(source, 0))
+        visitedNodeIds.add(source.id)
+
+        var temp: Node<T>
+
+        while (priorityQueue.isNotEmpty()) {
+            temp = priorityQueue.remove().node
+            temp.adjacent.forEach {
+                if (distanceTable[it.node] == null) {
+                    distanceTable[it.node] = distanceTable[temp]!! + it.weight
+                } else {
+                    distanceTable[it.node] = minOf(distanceTable[it.node]!!, distanceTable[temp]!! + it.weight)
+                }
+                if (!visitedNodeIds.contains(it.node.id)) {
+                    priorityQueue.add(it)
+                    visitedNodeIds.add(it.node.id)
+                }
+            }
+        }
+        return distanceTable
     }
 
     fun DFS(source: Node<T>, destination: Node<T>, visited: MutableSet<Int> = mutableSetOf()): Boolean {
@@ -72,7 +129,7 @@ class Graph<T> {
         }
 
         for (node in source.adjacent) {
-            if (DFS(node, destination, visited)) {
+            if (DFS(node.node, destination, visited)) {
                 return true
             }
         }
@@ -97,10 +154,10 @@ class Graph<T> {
             }
 
             for (node in start.adjacent) {
-                if (visited.contains(node.id)) {
+                if (visited.contains(node.node.id)) {
                     continue
                 }
-                stack.push(node)
+                stack.push(node.node)
             }
 
             start = stack.pop()
@@ -116,8 +173,8 @@ class Graph<T> {
         }
         visited.add(source.id)
         val pathLength = source.adjacent
-                .filter { !visited.contains(it.id) }
-                .map { shortestPath(it, destination, visited) }
+                .filter { !visited.contains(it.node.id) }
+                .map { shortestPath(it.node, destination, visited) }
                 .min() ?: Int.MAX_VALUE
         return if (pathLength == Int.MAX_VALUE) {
             Int.MAX_VALUE
