@@ -1,5 +1,6 @@
 package datastructures
 
+import java.lang.IllegalStateException
 import java.util.*
 
 class Graph<T> {
@@ -113,6 +114,55 @@ class Graph<T> {
                 }
             }
         }
+        return distanceTable
+    }
+
+    fun bellmenFordAlgo(source: Node<T>): Map<Node<T>, Int> {
+        val distanceTable = mutableMapOf<Node<T>, Int>()
+        distanceTable[source] = 0
+        val queue = ArrayDeque<Node<T>>()
+        val visitedNodes = mutableSetOf<Int>()
+
+        var temp: Node<T>
+        for (i in 1 until nodes.size) {
+            queue.clear()
+            visitedNodes.clear()
+            queue.add(source)
+            visitedNodes.add(source.id)
+            while (queue.isNotEmpty()) {
+                temp = queue.remove()
+                temp.adjacent.forEach {
+
+                    //Relaxation of edges
+                    val distance = distanceTable[temp]!! + it.weight
+                    if (distanceTable[it.node] == null || distance < distanceTable[it.node]!!) {
+                        distanceTable[it.node] = distance
+                    }
+
+                    if (!visitedNodes.contains(it.node.id)) {
+                        visitedNodes.add(it.node.id)
+                        queue.add(it.node)
+                    }
+                }
+            }
+        }
+
+        queue.clear()
+        visitedNodes.clear()
+        queue.add(source)
+        visitedNodes.add(source.id)
+        while (queue.isNotEmpty()) {
+            temp = queue.remove()
+            temp.adjacent.forEach {
+                val distance = distanceTable[temp]!! + it.weight
+                check(distance >= distanceTable[it.node]!!) { "Graph has -ve cycles." }
+                if (!visitedNodes.contains(it.node.id)) {
+                    visitedNodes.add(it.node.id)
+                    queue.add(it.node)
+                }
+            }
+        }
+
         return distanceTable
     }
 
