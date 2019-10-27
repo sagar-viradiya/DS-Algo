@@ -1,6 +1,5 @@
 package datastructures
 
-import java.lang.IllegalStateException
 import java.util.*
 
 class Graph<T> {
@@ -67,6 +66,7 @@ class Graph<T> {
         return DFS(source, destination)
     }
 
+    //Recommended for unweighted graph
     fun shortestPathBFS(source: Node<T>, destination: Node<T>): Int {
 
         if (source == destination) return 0
@@ -90,6 +90,8 @@ class Graph<T> {
         return -1
     }
 
+    //O(E*log(E * V))
+    //Recommended for +ve weighted graphs
     fun dijkstrasAlgo(source: Node<T>): Map<Node<T>, Int> {
         val distanceTable = mutableMapOf<Node<T>, Int>()
         distanceTable[source] = 0
@@ -117,6 +119,8 @@ class Graph<T> {
         return distanceTable
     }
 
+    //O(VE)
+    //Recommended For -ve weight graphs
     fun bellmenFordAlgo(source: Node<T>): Map<Node<T>, Int> {
         val distanceTable = mutableMapOf<Node<T>, Int>()
         distanceTable[source] = 0
@@ -155,7 +159,7 @@ class Graph<T> {
             temp = queue.remove()
             temp.adjacent.forEach {
                 val distance = distanceTable[temp]!! + it.weight
-                check(distance >= distanceTable[it.node]!!) { "Graph has -ve cycles." }
+                check(distance < distanceTable[it.node]!!) { "Graph has -ve cycles." }
                 if (!visitedNodes.contains(it.node.id)) {
                     visitedNodes.add(it.node.id)
                     queue.add(it.node)
@@ -164,6 +168,51 @@ class Graph<T> {
         }
 
         return distanceTable
+    }
+
+    //Recommended for DAG (Handles -ve weights also)
+    fun singleSourceShortestPathDAG(source: Node<T>): Map<Node<T>, Int> {
+        val topologicalSorting = topologicalSorting()
+        val distanceTable = mutableMapOf<Node<T>, Int>()
+        distanceTable[source] = 0
+        var tempDistance = 0
+        topologicalSorting.forEach {
+            it.adjacent.forEach { adjacentNode ->
+                tempDistance = distanceTable[it]!! + adjacentNode.weight
+                if (distanceTable[adjacentNode.node] == null || distanceTable[adjacentNode.node]!! > tempDistance) {
+                    distanceTable[adjacentNode.node] = tempDistance
+                }
+            }
+        }
+
+        return distanceTable
+    }
+
+    fun topologicalSorting(): List<Node<T>> {
+        val visitedNode = mutableSetOf<Int>()
+        val sortingList = LinkedList<Node<T>>()
+        nodes.forEach {
+            if (!visitedNode.contains(it.id)) {
+                topologicalDFS(it, sortingList, visitedNode)
+            }
+        }
+        return sortingList
+    }
+
+    fun topologicalDFS(start: Node<T>, nodeList: LinkedList<Node<T>>, visitedNode: MutableSet<Int>) {
+
+        if (visitedNode.contains(start.id)) return
+        visitedNode.add(start.id)
+        if (start.adjacent.isEmpty()) {
+            nodeList.addFirst(start)
+            return
+        }
+
+        start.adjacent.forEach {
+            topologicalDFS(it.node, nodeList, visitedNode)
+        }
+
+        nodeList.addFirst(start)
     }
 
     fun DFS(source: Node<T>, destination: Node<T>, visited: MutableSet<Int> = mutableSetOf()): Boolean {

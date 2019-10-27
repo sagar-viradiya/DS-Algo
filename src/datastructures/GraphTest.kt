@@ -1,7 +1,7 @@
 package datastructures
 
 fun main() {
-    val graph = Graph<Int>()
+    val graph = Graph<Char>()
     
     /*val nodeA = Graph.Node(1, 'A')
     val nodeB = Graph.Node(2, 'B')
@@ -70,7 +70,7 @@ fun main() {
     graph.add(node3)
     graph.add(node4)*/
 
-    val node0 = Graph.Node(0, 0)
+    /*val node0 = Graph.Node(0, 0)
     val node1 = Graph.Node(1, 1)
     val node2 = Graph.Node(2, 2)
     val node3 = Graph.Node(3, 3)
@@ -115,6 +115,46 @@ fun main() {
     graph.add(node9)
 
     val distance = graph.bellmenFordAlgo(node0)
+
+    distance.forEach {
+        println(it.key.value.toString() + " -> " + it.value)
+    }*/
+
+    val nodeC = Graph.Node(1, 'C')
+    val nodeA = Graph.Node(2, 'A')
+    val nodeB = Graph.Node(3, 'B')
+    val nodeD = Graph.Node(4, 'D')
+    val nodeE = Graph.Node(5, 'E')
+    val nodeF = Graph.Node(6, 'F')
+    val nodeG = Graph.Node(7, 'G')
+    val nodeH = Graph.Node(8, 'H')
+
+    nodeC.adjacent.add(Graph.WeightedNode(nodeD , 8))
+    nodeC.adjacent.add(Graph.WeightedNode(nodeG, 11))
+    nodeA.adjacent.add(Graph.WeightedNode(nodeB, 3))
+    nodeA.adjacent.add(Graph.WeightedNode(nodeC, 6))
+    nodeB.adjacent.add(Graph.WeightedNode(nodeD, 4))
+    nodeB.adjacent.add(Graph.WeightedNode(nodeC, 4))
+    nodeB.adjacent.add(Graph.WeightedNode(nodeE, 11))
+    nodeD.adjacent.add(Graph.WeightedNode(nodeE, -4))
+    nodeD.adjacent.add(Graph.WeightedNode(nodeF, 5))
+    nodeD.adjacent.add(Graph.WeightedNode(nodeG, 2))
+    nodeE.adjacent.add(Graph.WeightedNode(nodeH, 9))
+    nodeF.adjacent.add(Graph.WeightedNode(nodeH, 1))
+    nodeG.adjacent.add(Graph.WeightedNode(nodeH, 2))
+
+
+    graph.add(nodeA)
+    graph.add(nodeB)
+    graph.add(nodeC)
+    graph.add(nodeD)
+    graph.add(nodeE)
+    graph.add(nodeF)
+    graph.add(nodeG)
+    graph.add(nodeH)
+
+
+    val distance = graph.singleSourceShortestPathDAG(nodeA)
 
     distance.forEach {
         println(it.key.value.toString() + " -> " + it.value)
