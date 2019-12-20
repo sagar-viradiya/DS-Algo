@@ -2,6 +2,24 @@ package leetcode
 
 import java.util.*
 
+/*
+    Given a binary tree, print the level order traversal of its nodes' values. (ie, from left to right, level by level).
+
+    For example:
+    Given binary tree [3,9,20,null,null,15,7],
+        3
+       / \
+      9  20
+        /  \
+       15   7
+    return its level order traversal as:
+    [
+      [3],
+      [9,20],
+      [15,7]
+    ]
+ */
+
 private class TreeNode(val `val`: Int) {
     var left: TreeNode? = null
     var right: TreeNode? = null
@@ -38,12 +56,14 @@ fun main() {
         for (i in 0 until queue.size) {
             tempNode = queue.remove()
             levelList.add(tempNode.`val`)
-            if (tempNode.left != null) queue.add(tempNode.left)
-            if (tempNode.right != null) queue.add(tempNode.right)
+            if (tempNode.left != null) queue.add(tempNode.left!!)
+            if (tempNode.right != null) queue.add(tempNode.right!!)
         }
         levelOrder.add(levelList)
     }
 
-
-
+    levelOrder.forEach {
+        it.forEach { print("$it ") }
+        println()
+    }
 }
