@@ -20,7 +20,7 @@ import java.util.*
     ]
  */
 
-private class TreeNode(val `val`: Int) {
+class TreeNode(val `val`: Int) {
     var left: TreeNode? = null
     var right: TreeNode? = null
 }
