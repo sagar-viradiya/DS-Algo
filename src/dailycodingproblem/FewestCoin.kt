@@ -18,11 +18,12 @@ package dailycodingproblem
 
  */
 fun main() {
-    val coins = intArrayOf(2)
-    val amount = 3
-    print(getMinimumCoins(amount,coins,IntArray(amount)))
+    val coins = intArrayOf(1, 2, 5)
+    val amount = 11
+    print(getMinimumCoins(amount,coins))
 }
 
+//Top down DP
 fun getMinimumCoins(amount: Int, coins: IntArray, cache: IntArray): Int {
     if (amount < 0) return -1
     if (amount == 0) return 0
@@ -40,5 +41,24 @@ fun getMinimumCoins(amount: Int, coins: IntArray, cache: IntArray): Int {
         cache[amount - 1] = min
     }
     return cache[amount - 1]
+}
+
+//Bottom Up DP
+fun getMinimumCoins(amount: Int, coins: IntArray): Int {
+    val dp = IntArray(amount + 1) { if (it == 0) 0 else amount + 1 }
+
+    for (i in 1 until amount + 1) {
+        for (j in coins.indices) {
+            if (coins[j] <= i) {
+                dp[i] = minOf(dp[i], dp[i - coins[j]] + 1)
+            }
+        }
+    }
+
+    return if (dp[amount] > amount) {
+        -1
+    } else {
+        dp[amount]
+    }
 }
 
