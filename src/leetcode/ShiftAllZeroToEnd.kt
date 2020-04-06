@@ -16,20 +16,17 @@ package leetcode
 fun main() {
     val nums = intArrayOf(0,1,0,3,12)
 
-    var start = 0
-    var numberOfShiftedZeros = 0
-    var temp: Int
-    while (start < nums.size && start < nums.size - numberOfShiftedZeros - 1) {
-        if (nums[start] != 0) {
-            start++
-            continue
+    var nxt = 0
+
+    for (num in nums) {
+        if (num != 0) {
+            nums[nxt] = num
+            nxt++
         }
-        for (i in start until nums.size - numberOfShiftedZeros - 1) {
-            temp = nums[i]
-            nums[i] = nums[i+1]
-            nums[i+1] = temp
-        }
-        numberOfShiftedZeros++
+    }
+
+    for (i in nxt until nums.size) {
+        nums[i] = 0
     }
     nums.forEach { println(it) }
 }
