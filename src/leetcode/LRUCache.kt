@@ -43,25 +43,62 @@ fun main() {
 class LRUCache(capacity: Int) {
 
     val size = capacity
-    val cache = LinkedHashMap<Int, Int>()
+    private val hashMapOfValue = mutableMapOf<Int, DoublyLinkList.Node<Pair<Int, Int>>>()
+    private val cache = DoublyLinkList<Pair<Int, Int>>()
 
     fun get(key: Int): Int {
-        if (cache[key] != null) {
-            val value = cache[key]
-            cache.remove(key)
-            cache[key] = value!!
-            return cache[key]!!
+        if (hashMapOfValue.containsKey(key)) {
+            cache.remove(hashMapOfValue[key]!!)
+            cache.addHead(hashMapOfValue[key]!!)
+            return hashMapOfValue[key]!!.value.second
         }
         return -1
     }
 
     fun put(key: Int, value: Int) {
-        if (cache[key] != null) {
-            cache.remove(key)
-        } else if (cache.size == size) {
-            val first = cache.iterator().next()
-            cache.remove(first.key)
+        if (hashMapOfValue.containsKey(key)) {
+            cache.remove(hashMapOfValue[key]!!)
+            hashMapOfValue.remove(key)
+        } else if (hashMapOfValue.size == size) {
+            hashMapOfValue.remove(cache.tail!!.value.first)
+            cache.remove(cache.tail!!)
         }
-        cache[key] = value
+        val node = DoublyLinkList.Node(Pair(key, value))
+        cache.addHead(node)
+        hashMapOfValue[key] = node
+    }
+}
+
+class DoublyLinkList<T> {
+
+    class Node<T>(val value: T, var previous: Node<T>? = null, var next: Node<T>? = null)
+
+    var head: Node<T>? = null
+    var tail: Node<T>? = null
+
+    fun addHead(node: Node<T>) {
+        if (head == null) {
+            head = node
+            tail = node
+            return
+        }
+        head!!.previous = node
+        node.next = head
+        head = node
+    }
+
+    fun remove(node: Node<T>) {
+        node.previous?.next = node.next
+        node.next?.previous = node.previous
+
+        if (node == head) {
+            head = node.next
+        }
+
+        if (node == tail) {
+            tail = node.previous
+        }
+        node.next = null
+        node.previous = null
     }
 }
