@@ -44,7 +44,7 @@ package leetcode_may_challenge
         -30000 <= A[i] <= 30000
         1 <= A.length <= 30000
 
-    https://leetcode.com/problems/maximum-sum-circular-subarray/solution/
+    https://youtu.be/s1CYAnJwf50
  */
 fun main() {
     val A = intArrayOf(5, -2, 5)
@@ -53,15 +53,12 @@ fun main() {
         return
     }
     val sum = A.sum()
-    print(
-            maxOf(
-                    kadaneAlgo(A, 1, A.size),
-                    maxOf(
-                            sum + kadaneAlgo(A, 2, A.size, -1),
-                            sum + kadaneAlgo(A, 1, A.size - 1, -1)
-                    )
-            )
-    )
+    val max = kadaneAlgo(A, 1, A.size)
+    if (max < 0) {
+        print(max)
+    } else {
+        print(maxOf(max, sum + kadaneAlgo(A, 1, A.size, -1)))
+    }
 }
 
 private fun kadaneAlgo(array: IntArray, start: Int, end: Int, sign: Int = 1): Int {
